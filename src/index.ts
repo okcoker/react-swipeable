@@ -156,7 +156,7 @@ function getHandlers(
             defaultProps.delta;
       if (absX < delta && absY < delta && !state.swiping) return state;
 
-      const eventData = {
+      const eventData: SwipeEventData = {
         absX,
         absY,
         deltaX,
@@ -192,7 +192,13 @@ function getHandlers(
         props.trackTouch &&
         event.cancelable
       ) {
-        event.preventDefault();
+        if (typeof props.preventScrollOnSwipe === "function") {
+          if (props.preventScrollOnSwipe(eventData)) {
+            event.preventDefault();
+          }
+        } else {
+          event.preventDefault();
+        }
       }
 
       return {

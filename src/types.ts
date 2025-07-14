@@ -116,7 +116,7 @@ export interface ConfigurationOptions {
   /**
    * Prevents scroll during swipe in most cases. **Default**: `false`
    */
-  preventScrollOnSwipe: boolean;
+  preventScrollOnSwipe: boolean | ((eventData: SwipeEventData) => boolean);
   /**
    * Set a rotation angle. **Default**: `0`
    */
