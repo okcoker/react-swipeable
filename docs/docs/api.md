@@ -116,12 +116,15 @@ Swipeable will call `e.preventDefault()` internally in an attempt to stop the br
 
 Please experiment with the [Feature Testing Console](examples/feature-test-console) to test `preventScrollOnSwipe`.
 
+You may also pass a function to this option which accepts `SwipeEventData` and returns a boolean. This could be useful if you only want to prevent scroll based on certain criteria.
+
 #### passive listener details
 Swipeable adds the passive event listener option, by default, to **internal uses** of touch `addEventListener`'s. We set the `passive` option to `false` only when `preventScrollOnSwipe` is `true` and only to `touchmove`. Other listeners will retain `passive: true`.
 
 **When `preventScrollOnSwipe` is:**
   - `true`  => `el.addEventListener('touchmove', cb, { passive: false })`
   - `false` => `el.addEventListener('touchmove', cb, { passive: true })`
+  - `(swipeEventData) => boolean`  => `el.addEventListener('touchmove', cb, { passive: false })`
 
 Here is more information on react's long running passive [event issue](https://github.com/facebook/react/issues/6436).
 
