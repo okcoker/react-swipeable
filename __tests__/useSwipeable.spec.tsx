@@ -1093,4 +1093,84 @@ describe("useSwipeable", () => {
     // verify we did NOT trigger another swipe
     expect(onSwiped).toHaveBeenCalledTimes(1);
   });
+
+  it("calls preventDefault when passing a function that returns true", () => {
+    const onSwipedDown = jest.fn();
+    const preventScrollOnSwipe = () => true;
+
+    const { getByText, rerender } = render(
+      <SwipeableUsingHook
+        onSwipedDown={undefined}
+        preventScrollOnSwipe={preventScrollOnSwipe}
+      />
+    );
+
+    const touchArea = getByText(TESTING_TEXT);
+
+    fireEvent[TS](touchArea, cte({ x: 100, y: 100 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 150 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 200 }));
+    fireEvent[TE](touchArea, cte({}));
+
+    // Validate `undefined` does not trigger defaultPrevented
+    expect(onSwipedDown).not.toHaveBeenCalled();
+    expect(defaultPrevented).toBe(0);
+
+    rerender(
+      <SwipeableUsingHook
+        onSwipedDown={onSwipedDown}
+        preventScrollOnSwipe={preventScrollOnSwipe}
+      />
+    );
+
+    fireEvent[TS](touchArea, cte({ x: 100, y: 100 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 125 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 150 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 175 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 200 }));
+    fireEvent[TE](touchArea, cte({}));
+
+    expect(onSwipedDown).toHaveBeenCalled();
+    expect(defaultPrevented).toBe(4);
+  });
+
+  it("does not preventDefault when passing a function that returns false", () => {
+    const onSwipedDown = jest.fn();
+    const preventScrollOnSwipe = () => false;
+
+    const { getByText, rerender } = render(
+      <SwipeableUsingHook
+        onSwipedDown={undefined}
+        preventScrollOnSwipe={preventScrollOnSwipe}
+      />
+    );
+
+    const touchArea = getByText(TESTING_TEXT);
+
+    fireEvent[TS](touchArea, cte({ x: 100, y: 100 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 150 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 200 }));
+    fireEvent[TE](touchArea, cte({}));
+
+    // Validate `undefined` does not trigger defaultPrevented
+    expect(onSwipedDown).not.toHaveBeenCalled();
+    expect(defaultPrevented).toBe(0);
+
+    rerender(
+      <SwipeableUsingHook
+        onSwipedDown={onSwipedDown}
+        preventScrollOnSwipe={preventScrollOnSwipe}
+      />
+    );
+
+    fireEvent[TS](touchArea, cte({ x: 100, y: 100 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 125 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 150 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 175 }));
+    fireEvent[TM](touchArea, cte({ x: 100, y: 200 }));
+    fireEvent[TE](touchArea, cte({}));
+
+    expect(onSwipedDown).toHaveBeenCalled();
+    expect(defaultPrevented).toBe(0);
+  });
 });
